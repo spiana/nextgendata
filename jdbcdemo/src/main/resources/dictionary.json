@@ -1,0 +1,222 @@
+{
+    "address": {
+        "className": "com.step4.jdbcdemo.model.Address",
+        "name": "address",
+        "ids": [
+            "PK",
+            "id"
+        ],
+        "attributes": [
+            {
+                "type": "java.lang.Long",
+                "name": "id",
+                "columnName": "PK",
+                "referredColumn": null,
+                "id": true,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "street",
+                "columnName": "street",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "streetNumber",
+                "columnName": "street_number",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "zipCode",
+                "columnName": "zip_code",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "city",
+                "columnName": "city",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "com.step4.jdbcdemo.model.Customer",
+                "name": "customer",
+                "columnName": "customer_id",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            }
+        ]
+    },
+    "customer_ext1": {
+        "className": "com.step4.jdbcdemo.model.Item",
+        "name": "customer_ext1",
+        "ids": [
+            "PK",
+            "id"
+        ],
+        "attributes": [
+            {
+                "type": "java.lang.Long",
+                "name": "id",
+                "columnName": "PK",
+                "referredColumn": null,
+                "id": true,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "custom4",
+                "columnName": "custom1",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "custom5",
+                "columnName": "custom2",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "com.step4.jdbcdemo.model.Item",
+                "name": "customer",
+                "columnName": "customer_id",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            }
+        ]
+    },
+    "customer": {
+        "className": "com.step4.jdbcdemo.model.Customer",
+        "name": "customer",
+        "ids": [
+            "PK",
+            "id"
+        ],
+        "attributes": [
+            {
+                "type": "java.lang.Long",
+                "name": "id",
+                "columnName": "PK",
+                "referredColumn": null,
+                "id": true,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "firstName",
+                "columnName": "first_name",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "lastName",
+                "columnName": "last_name",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.Long",
+                "name": "addresses",
+                "columnName": null,
+                "referredColumn": "customer_id",
+                "id": false,
+                "relationType": "ONE_2_MANY",
+                "relationObject": "address"
+            },
+            {
+                "type": "java.lang.Long",
+                "name": "customer_ext",
+                "columnName": null,
+                "referredColumn": "customer_id",
+                "id": false,
+                "relationType": "ONE_2_ONE",
+                "relationObject": "customer_ext"
+            },
+            {
+                "type": "java.lang.Long",
+                "name": "customer_ext1",
+                "columnName": null,
+                "referredColumn": "customer_id",
+                "id": false,
+                "relationType": "ONE_2_ONE",
+                "relationObject": "customer_ext1"
+            }
+        ]
+    },
+    "customer_ext": {
+        "className": "com.step4.jdbcdemo.model.Customer_ext",
+        "name": "customer_ext",
+        "ids": [
+            "PK",
+            "id"
+        ],
+        "attributes": [
+            {
+                "type": "java.lang.Long",
+                "name": "id",
+                "columnName": "PK",
+                "referredColumn": null,
+                "id": true,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "custom1",
+                "columnName": "custom1",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "java.lang.String",
+                "name": "custom2",
+                "columnName": "custom2",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            },
+            {
+                "type": "com.step4.jdbcdemo.model.Item",
+                "name": "customer",
+                "columnName": "customer_id",
+                "referredColumn": null,
+                "id": false,
+                "relationType": "NONE",
+                "relationObject": null
+            }
+        ]
+    }
+}
