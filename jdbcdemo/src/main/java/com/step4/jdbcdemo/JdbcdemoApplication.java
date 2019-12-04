@@ -25,6 +25,7 @@ import com.step4.jdbcdemo.Impl.DefaultModelService;
 //@EnableJdbcRepositories
 @ComponentScan("com.step4.jdbcdemo")
 @ComponentScan("com.step4.jdbcdemo.mvc")
+//@ComponentScan("com.step4.jdbcdemo.Repository")
 @EnableWebMvc
 public class JdbcdemoApplication {
 

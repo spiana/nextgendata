@@ -36,16 +36,16 @@ import com.step4.jdbcdemo.model.Item;
 
 @RestController
 @RequestMapping(path = "/modelController")
-public class ModelControllerImpl {
+public class ModelControllerImpl<S extends Item> {
 
 	@Resource(name="customerRepository")
 	MetaRepository<Customer> customerRepository;
 	
 	
 	@RequestMapping( path = "/{model}" , method = RequestMethod.POST , produces = MediaType.APPLICATION_JSON_VALUE)
-	public ItemResource create( @PathVariable(name="model") String typeCode , @RequestBody  Item item){
+	public ItemResource create( @PathVariable(name="model") String typeCode , @RequestBody  S item){
 		
-		MetaRepository<Item> repo = getRepository(typeCode);
+		MetaRepository<S> repo = getRepository(typeCode);
 		Assert.notNull(repo);
 		item.typeCode = typeCode;
 
@@ -57,7 +57,7 @@ public class ModelControllerImpl {
 	@RequestMapping( path = "/{model}/{id}" , method = RequestMethod.GET , produces = MediaType.APPLICATION_JSON_VALUE)
 	public ItemResource findById( @PathVariable(name="model") String typeCode , @PathVariable(name="id") Long id){
 		
-		MetaRepository<Item> repo = getRepository(typeCode);
+		MetaRepository<S> repo = getRepository(typeCode);
 
 		Assert.notNull(repo);
 		
@@ -68,7 +68,7 @@ public class ModelControllerImpl {
 	@RequestMapping( path = "/{model}/all" , method = RequestMethod.GET , produces = MediaType.APPLICATION_JSON_VALUE)
 	public CollectionModel<ItemResource>  findAll( @PathVariable(name="model") String typeCode){
 		
-		MetaRepository<Item> repo = getRepository(typeCode);
+		MetaRepository<S> repo = getRepository(typeCode);
 
 		Assert.notNull(repo);
 		
@@ -97,10 +97,19 @@ public class ModelControllerImpl {
 	}
 	
 	
+	@RequestMapping( path = "/{model}/search" , method = RequestMethod.GET , produces = MediaType.APPLICATION_JSON_VALUE)
+	public CollectionModel<ItemResource> search( @PathVariable(name="model") String typeCode , @RequestParam(name="q") String query,@PageableDefault org.springframework.data.domain.Pageable p, PagedResourcesAssembler pagedAssembler) throws NoSuchMethodException, SecurityException{
+	
+		MetaRepository<Item> repo = getRepository(typeCode);
+		Assert.notNull(repo);
+		
+		return new CollectionModel<ItemResource>( repo.search(query).stream().map(ItemResource::new).collect(Collectors.toList()));
+
+	}
 	
 	
-	private MetaRepository<Item> getRepository(String typeCode){
-		MetaRepository<Item> repo = Registry.getRegistry().getBean(typeCode + "Repository" , MetaRepository.class);
+	private <S extends Item> MetaRepository<S> getRepository(String typeCode){
+		MetaRepository<S> repo = Registry.getRegistry().getBean(typeCode + "Repository" , MetaRepository.class);
 		Assert.notNull(repo);
 		
 		return repo;

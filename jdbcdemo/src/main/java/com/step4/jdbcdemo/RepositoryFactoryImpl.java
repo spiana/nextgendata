@@ -10,9 +10,10 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.stereotype.Component;
 
 import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.repository.RepositoryCallBackMapper;
 
 @Component
-public class RepositoryFactoryImpl implements RepositoryFactory, BeanDefinitionRegistryPostProcessor {
+public class RepositoryFactoryImpl<T extends Item> implements RepositoryFactory<T>, BeanDefinitionRegistryPostProcessor {
 
 	private static Logger logger = LoggerFactory.getLogger(RepositoryFactoryImpl.class);
 	
@@ -26,22 +27,21 @@ public class RepositoryFactoryImpl implements RepositoryFactory, BeanDefinitionR
 
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-	
-
-
 	}
 	
-	public void registerRepositories() {
+	public void  registerRepositories() {
 		PersistanceDictionary persistanceDictionary = beanFactory.getBean(PersistanceDictionary.class);
+		@SuppressWarnings("unchecked")
+		RepositoryCallBackMapper<T> callBackMapper = beanFactory.getBean(RepositoryCallBackMapper.class);
 
 		for (String model : persistanceDictionary.keySet()) {
 			PersistenceEntity entity = persistanceDictionary.get(model);
 
-			MetaRepository<Item> _r = null;
+			MetaRepository<T> _r = null;
 
 			try {
-				_r = new MetaRepository<Item>(entity.getName(), Class.forName(entity.getClassName() ), entity.getName(),
-						persistanceDictionary);
+				_r = new MetaRepository<T>(entity.getName(),  Class.forName(entity.getClassName() ), entity.getName(),
+						persistanceDictionary, callBackMapper);
 				_r.setBeanFactory(beanFactory);
 				_r.afterPropertiesSet();
 				

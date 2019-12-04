@@ -47,13 +47,13 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 
 					if (!Item.class.isAssignableFrom(Class.forName(attribute.type))) {
 						if (columns.contains(attribute.columnName.toLowerCase()))
-							type.addProperty(attribute.name,
+							type.putProperty(attribute.name,
 									rs.getObject(attribute.columnName, Class.forName(attribute.type)));
 					} else {
-						type.addProperty(attribute.name, new LazyLoadedColumn<Item>(attribute.name, "pk",
+						type.putProperty(attribute.name, new LazyLoadedColumn<Item>(attribute.name, "pk",
 								rs.getLong(attribute.columnName), attribute.type));
 
-						type.addProperty(attribute.name, type.getProperty(attribute.name));
+						type.putProperty(attribute.name, type.getProperty(attribute.name));
 
 					}
 				} else if (attribute.relationType == RelationType.ONE_2_MANY
@@ -68,7 +68,7 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 					ItemRelation<Item> relation = new ItemRelation<Item>(attribute.relationObject,
 							attribute.getReferredColumn(), attribute.relationType, type.getPk(), related);
 
-					type.addProperty(attribute.name, relation);
+					type.putProperty(attribute.name, relation);
 				}
 
 			} catch (ClassNotFoundException e) {

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.step4.jdbcdemo.model.Item;
 
-public class ItemDeserializer extends JsonDeserializer<Item> {
+public class ItemDeserializer<T extends Item> extends JsonDeserializer<T> {
 
 	PersistanceDictionary dictionary;
 
@@ -22,8 +22,8 @@ public class ItemDeserializer extends JsonDeserializer<Item> {
 	}
 
 	@Override
-	public Item deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-		Item item = new Item();
+	public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+		T item = null;
 		JsonNode node = p.getCodec().readTree(p);
 
 		Long pk = node.get("pk") != null ? node.get("pk").asLong() : null;
@@ -31,6 +31,13 @@ public class ItemDeserializer extends JsonDeserializer<Item> {
 
 		PersistenceEntity entity = dictionary.get(typeCode);
 
+		try {
+			item = (T) Class.forName(entity.getClassName()).newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		ObjectMapper mapper = new ObjectMapper();
 
 		item.setPk(pk);
@@ -48,11 +55,11 @@ public class ItemDeserializer extends JsonDeserializer<Item> {
 
 				if (a.relationType.equals(RelationType.NONE)) {
 					try {
-						if (!Item.class.isAssignableFrom(Class.forName(a.type))) {
-							item.addProperty(k, mapper.convertValue(e.getValue(), Class.forName(a.type)));
-						} else {
-							item.addProperty(k, mapper.convertValue(e.getValue(), Item.class));
-						}
+				//		if (!Item.class.isAssignableFrom(Class.forName(a.type))) {
+							item.putProperty(k, mapper.convertValue(e.getValue(), Class.forName(a.type)));
+				//		} else {
+				//			item.addProperty(k, mapper.convertValue(e.getValue(), Item.class));
+				//		}
 
 					} catch (ClassNotFoundException e1) {
 						// TODO: handle exception
@@ -66,5 +73,7 @@ public class ItemDeserializer extends JsonDeserializer<Item> {
 
 		return item;
 	}
+
+
 
 }

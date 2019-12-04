@@ -1,6 +1,6 @@
 package com.step4.jdbcdemo;
 
-public interface RepositoryFactory {
+public interface RepositoryFactory<T> {
 
 	public void registerRepositories();
 }
