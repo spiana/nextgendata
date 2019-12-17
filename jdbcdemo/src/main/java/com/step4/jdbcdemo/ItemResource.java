@@ -13,8 +13,6 @@ import com.step4.jdbcdemo.mvc.ModelControllerImpl;
 
 public class ItemResource extends RepresentationModel<ItemResource> {
 	
-	public Long pk;
-	
 	public String typeCode;
 
 	public Map<String, Object> properties = new HashMap<String, Object>();
@@ -22,11 +20,11 @@ public class ItemResource extends RepresentationModel<ItemResource> {
 	public ItemResource(Item item) {
 		super();
 		this.typeCode = item.typeCode;
-		this.pk = item.getPk();
+	
 		
 		 Map<String, Object> props = item.getProperties();
 		
-		add(WebMvcLinkBuilder.linkTo(ModelControllerImpl.class).slash(item.typeCode).slash(item.getPk()).withSelfRel());
+		add(WebMvcLinkBuilder.linkTo(ModelControllerImpl.class).slash(item.typeCode).slash(item.getId()).withSelfRel());
 
 		for (String key : props.keySet()) {
 			Object value = props.get(key);

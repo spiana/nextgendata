@@ -27,12 +27,18 @@ public class Item implements Persistable<Long> {
 	@JsonIgnore
 	public ApplicationContext context;
 
-	@Id
+	@JsonIgnore
+	@Transient
 	public Long pk;
 
+	
 	@Transient
 	public String typeCode;
 
+	@Transient
+	@JsonIgnore
+	public String id_column;
+	
 	public Item() {
 		super();
 		this.context = Registry.getRegistry();
@@ -122,12 +128,12 @@ public class Item implements Persistable<Long> {
 	@Override
 	public Long getId() {
 
-		return getPk();
+		return (Long) getProperty(id_column);
 	}
 
 	@Override
 	public boolean isNew() {
-		return pk == null ? true : false;
+		return getId() == null ? true : false;
 	}
 
 	public String getTypeCode() {

@@ -38,7 +38,7 @@ public class ModelRowUnMapper<T extends Item> implements RowUnmapper<T> {
 						columns.put(attribute.getColumnName(), t.getProperty(attribute.getName()));
 					} else {
 						Item _item = (Item)t.getProperty(attribute.getName());
-						columns.put(attribute.getColumnName(), _item.pk);
+						columns.put(attribute.getColumnName(), _item.getId());
 					}
 				}
 			} catch (ClassNotFoundException e) {

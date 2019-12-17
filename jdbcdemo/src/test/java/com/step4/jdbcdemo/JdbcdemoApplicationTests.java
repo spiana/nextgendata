@@ -60,7 +60,7 @@ class JdbcdemoApplicationTests {
 	
 	assertEquals("Milano",address.getProperty("city"));
 	
-	assertEquals(t.getPk(),((Item)address.getProperty("customer")).getPk());
+	assertEquals(t.getProperty("id"),((Item)address.getProperty("customer")).getProperty("id"));
 	System.out.println(address.getProperties());
 	
 	assertEquals("sergio",t.getProperty("firstName"));

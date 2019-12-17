@@ -26,9 +26,8 @@ public class ItemDeserializer<T extends Item> extends JsonDeserializer<T> {
 		T item = null;
 		JsonNode node = p.getCodec().readTree(p);
 
-		Long pk = node.get("pk") != null ? node.get("pk").asLong() : null;
 		String typeCode = node.get("typeCode").asText();
-
+		
 		PersistenceEntity entity = dictionary.get(typeCode);
 
 		try {
@@ -40,8 +39,9 @@ public class ItemDeserializer<T extends Item> extends JsonDeserializer<T> {
 		
 		ObjectMapper mapper = new ObjectMapper();
 
-		item.setPk(pk);
+	//	item.setPk(pk);
 		item.setTypeCode(typeCode);
+		item.id_column = entity.getIds().get(0);
 
 		if (node.get("properties") != null) {
 			Iterator<Map.Entry<String, JsonNode>> iterator = node.get("properties").fields();

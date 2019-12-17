@@ -4,9 +4,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.util.Assert;
 
 import com.step4.jdbcdemo.model.Item;
 import com.step4.jdbcdemo.model.ItemRelation;
@@ -28,11 +33,12 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 	@Override
 	public T mapRow(ResultSet rs, int rowNum) throws SQLException {
 		T type = createModel(type_class, typeCode);
-
-		type.setPk(rs.getObject("pk", Long.class));
-
+		
 		PersistenceEntity entity = dictionary.get(typeCode);
+		type.id_column = entity.getIds().get(0);
 
+		//type.setPk(rs.getObject(entity.getIds().get(0), Long.class));
+			
 		List<String> columns = new ArrayList<String>();
 		for (int x = 1; x <= rs.getMetaData().getColumnCount(); x++) {
 			columns.add(rs.getMetaData().getColumnName(x).toLowerCase());
@@ -41,41 +47,13 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 		if (entity == null)
 			throw new RuntimeException(String.format("no entity found  %s ", type.getClass().getSimpleName()));
 
-		for (PersistanceAttribute attribute : entity.getAttributes()) {
-			try {
-				if (attribute.relationType == RelationType.NONE) {
-
-					if (!Item.class.isAssignableFrom(Class.forName(attribute.type))) {
-						if (columns.contains(attribute.columnName.toLowerCase()))
-							type.putProperty(attribute.name,
-									rs.getObject(attribute.columnName, Class.forName(attribute.type)));
-					} else {
-						type.putProperty(attribute.name, new LazyLoadedColumn<Item>(attribute.name, "pk",
-								rs.getLong(attribute.columnName), attribute.type));
-
-						type.putProperty(attribute.name, type.getProperty(attribute.name));
-
-					}
-				} else if (attribute.relationType == RelationType.ONE_2_MANY
-						|| attribute.relationType == RelationType.ONE_2_ONE) {
-
-					PersistenceEntity related_entity = dictionary.get(attribute.getRelationObject());
-
-					Item related;
-
-					related = (Item) createModel(Class.forName(related_entity.getClassName()), related_entity.getName());
-
-					ItemRelation<Item> relation = new ItemRelation<Item>(attribute.relationObject,
-							attribute.getReferredColumn(), attribute.relationType, type.getPk(), related);
-
-					type.putProperty(attribute.name, relation);
-				}
-
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		// Populate Ids Columns
+		populateProperties(entity.getAttributes().stream().filter(p -> p.isId() ).collect(Collectors.toList()), columns, type, rs);
+		
+		populateProperties(entity.getAttributes(), columns, type, rs);
+		
+		
+	
 
 		return type;
 	}
@@ -97,7 +75,49 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		return a;
+	}
+	
+	private void populateProperties(Collection<PersistanceAttribute> attributes , List<String> columns  , T type , ResultSet rs) throws SQLException {
+
+		for (PersistanceAttribute attribute : attributes) {
+			try {
+				if (attribute.relationType == RelationType.NONE) {
+
+					if (!Item.class.isAssignableFrom(Class.forName(attribute.type))) {
+						if (columns.contains(attribute.columnName.toLowerCase()))
+							type.putProperty(attribute.name,
+									rs.getObject(attribute.columnName, Class.forName(attribute.type)));
+					} else {
+						PersistenceEntity _e = dictionary.get(attribute.name);
+						Assert.notNull(_e);
+						
+						type.putProperty(attribute.name, new LazyLoadedColumn<Item>(attribute.name, _e.getIds().get(0),
+								rs.getLong(attribute.columnName), attribute.type));
+
+						type.putProperty(attribute.name, type.getProperty(attribute.name));
+
+					}
+				} else if (attribute.relationType == RelationType.ONE_2_MANY
+						|| attribute.relationType == RelationType.ONE_2_ONE) {
+
+					PersistenceEntity related_entity = dictionary.get(attribute.getRelationObject());
+
+					Item related;
+
+					related = (Item) createModel(Class.forName(related_entity.getClassName()), related_entity.getName());
+
+					ItemRelation<Item> relation = new ItemRelation<Item>(attribute.relationObject,
+							attribute.getReferredColumn(), attribute.relationType, type.getId(), related);
+
+					type.putProperty(attribute.name, relation);
+				}
+
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }

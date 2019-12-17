@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -93,7 +94,10 @@ public class ModelControllerImpl<S extends Item> {
 		Assert.notNull(repo);
 		
 		Page<Item> pages = repo.findAll(p);
-		  return pagedAssembler.toModel(pages);
+		
+		Page<ItemResource> _p = new PageImpl<ItemResource>(pages.getContent().stream().map(ItemResource::new).collect(Collectors.toList()));
+				
+		return pagedAssembler.toModel(_p);
 	}
 	
 	
