@@ -3,13 +3,15 @@ package com.step4.jdbcdemo;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+
 import com.nurkiewicz.jdbcrepository.JdbcRepository;
 import com.step4.jdbcdemo.model.Item;
 import com.step4.jdbcdemo.repository.RepositoryCallBackMapper;
-import com.step4.jdbcdemo.repository.PostCreateCallBack;
-import com.step4.jdbcdemo.repository.PreCreateCallBack;
+import com.step4.jdbcdemo.repository.AfterSaveCallBack;
+import com.step4.jdbcdemo.repository.BeforeSaveCallBack;
 
-public class MetaRepository<T extends Item> extends JdbcRepository<T, Long> {
+public class MetaRepository<T extends Item> extends JdbcRepository<T, Long>  {
 	PersistanceDictionary dictionary;
 	RepositoryCallBackMapper<T> callBackMapper;
 
@@ -23,38 +25,35 @@ public class MetaRepository<T extends Item> extends JdbcRepository<T, Long> {
 
 	@Override
 	protected <S extends T> S postCreate(S entity, Number generatedId) {
-		entity.setPk(generatedId.longValue());
-		List<PostCreateCallBack<T>> _l = callBackMapper.getPostCreateCallBack(entity.getTypeCode());
-		if (_l != null) {
-			for (PostCreateCallBack<T> repositoryPostCreateCallBack : _l) {
-				repositoryPostCreateCallBack.onPostCreate(entity);
-			}
-		}
+		entity.putProperty(entity.id_column, generatedId.longValue());
 		return entity;
 	}
+	
+
+	
 
 	@Override
-	protected Map<String, Object> preUpdate(T entity, Map<String, Object> columns) {
-		
-		return super.preUpdate(entity, columns);
-	}
-
-	@Override
-	protected Map<String, Object> preCreate(Map<String, Object> columns, T entity) {
-		List<PreCreateCallBack<T>> _l = callBackMapper.getPreCreateCallBack(entity.getTypeCode());
+	protected <S extends T> S beforeSave(S entity) {
+		List<BeforeSaveCallBack<T>> _l = callBackMapper.getPreCreateCallBack(entity.getTypeCode());
 		if (_l != null) {
-			for (PreCreateCallBack<T> repositoryPostCreateCallBack : _l) {
+			for (BeforeSaveCallBack<T> repositoryPostCreateCallBack : _l) {
 				repositoryPostCreateCallBack.onPreCreate(entity);
 			}
 		}
 		
-		return super.preCreate(columns, entity);
+		return super.beforeSave( entity);
 	}
 
 	@Override
-	protected <S extends T> S postUpdate(S entity) {
-	
-		return super.postUpdate(entity);
+	protected <S extends T> S afterSave(S entity) {
+		List<AfterSaveCallBack<T>> _l = callBackMapper.getPostCreateCallBack(entity.getTypeCode());
+		if (_l != null) {
+			for (AfterSaveCallBack<T> repositoryPostCreateCallBack : _l) {
+				repositoryPostCreateCallBack.onPostCreate(entity);
+			}
+		}
+		return super.afterSave(entity);
 	}
+
 
 }

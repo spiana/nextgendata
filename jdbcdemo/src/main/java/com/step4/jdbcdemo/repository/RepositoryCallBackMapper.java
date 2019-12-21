@@ -18,13 +18,13 @@ import com.step4.jdbcdemo.model.Item;
 public class RepositoryCallBackMapper<T extends Item> implements InitializingBean , ApplicationContextAware  {
 
 	ApplicationContext applicationContext;
-	Map<String , List<PostCreateCallBack<T>>> postCreateCallBack;
-	Map<String , List<PreCreateCallBack<T>>> preCreateCallBack;
+	Map<String , List<AfterSaveCallBack<T>>> postCreateCallBack;
+	Map<String , List<BeforeSaveCallBack<T>>> preCreateCallBack;
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		 postCreateCallBack = new LinkedHashMap<String, List<PostCreateCallBack<T>>>();
-		 preCreateCallBack = new LinkedHashMap<String, List<PreCreateCallBack<T>>>();
+		 postCreateCallBack = new LinkedHashMap<String, List<AfterSaveCallBack<T>>>();
+		 preCreateCallBack = new LinkedHashMap<String, List<BeforeSaveCallBack<T>>>();
 		 
 		Map<String, RepositoryCallBack> beans =applicationContext.getBeansOfType(RepositoryCallBack.class);
 		
@@ -40,19 +40,19 @@ public class RepositoryCallBackMapper<T extends Item> implements InitializingBea
 			if (_typeCode == null)
 				continue;
 			
-			if (_callBack instanceof PostCreateCallBack) {
-				List<PostCreateCallBack<T>> _l = postCreateCallBack.get(_typeCode) ;
+			if (_callBack instanceof AfterSaveCallBack) {
+				List<AfterSaveCallBack<T>> _l = postCreateCallBack.get(_typeCode) ;
 				if (_l == null) {
-					_l = new ArrayList<PostCreateCallBack<T>>();
+					_l = new ArrayList<AfterSaveCallBack<T>>();
 				}
-				_l.add((PostCreateCallBack)_callBack);
+				_l.add((AfterSaveCallBack)_callBack);
 				postCreateCallBack.put(_typeCode, _l);
-			}else if (_callBack instanceof PreCreateCallBack){
-				List<PreCreateCallBack<T>> _l = preCreateCallBack.get(_typeCode) ;
+			}else if (_callBack instanceof BeforeSaveCallBack){
+				List<BeforeSaveCallBack<T>> _l = preCreateCallBack.get(_typeCode) ;
 				if (_l == null) {
-					_l = new ArrayList<PreCreateCallBack<T>>();
+					_l = new ArrayList<BeforeSaveCallBack<T>>();
 				}
-				_l.add((PreCreateCallBack)_callBack);
+				_l.add((BeforeSaveCallBack)_callBack);
 				preCreateCallBack.put(_typeCode, _l);
 			}
 			
@@ -60,7 +60,7 @@ public class RepositoryCallBackMapper<T extends Item> implements InitializingBea
 		
 	}
 
-	public  List<PostCreateCallBack<T>> getPostCreateCallBack(String typeCode){
+	public  List<AfterSaveCallBack<T>> getPostCreateCallBack(String typeCode){
 		return postCreateCallBack.get(typeCode);
 	}
 
@@ -70,7 +70,7 @@ public class RepositoryCallBackMapper<T extends Item> implements InitializingBea
 		
 	}
 
-	public List<PreCreateCallBack<T>> getPreCreateCallBack(String typeCode) {
+	public List<BeforeSaveCallBack<T>> getPreCreateCallBack(String typeCode) {
 		return preCreateCallBack.get(typeCode);
 	}
 

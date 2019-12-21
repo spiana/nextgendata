@@ -8,7 +8,7 @@ import com.step4.jdbcdemo.model.Customer;
 
 @CallBack(typeCode="customer")
 @Component
-public class CustomerPostCreateCallBack implements PostCreateCallBack<Customer>{
+public class CustomerPostCreateCallBack implements AfterSaveCallBack<Customer>{
 
 	Logger LOG = LoggerFactory.getLogger(CustomerPostCreateCallBack.class);
 	

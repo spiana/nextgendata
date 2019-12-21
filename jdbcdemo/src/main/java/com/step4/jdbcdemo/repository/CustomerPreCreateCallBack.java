@@ -8,7 +8,7 @@ import com.step4.jdbcdemo.model.Customer;
 
 @Component
 @CallBack(typeCode="customer")
-public class CustomerPreCreateCallBack implements PreCreateCallBack<Customer> {
+public class CustomerPreCreateCallBack implements BeforeSaveCallBack<Customer> {
 	Logger LOG = LoggerFactory.getLogger(CustomerPreCreateCallBack.class);
 	@Override
 	public void onPreCreate(Customer item) {

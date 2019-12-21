@@ -10,7 +10,7 @@ import com.step4.jdbcdemo.model.Customer;
 
 @Component
 @CallBack(typeCode = "customer")
-public class CustomerPreCreateCallBackJs  implements PreCreateCallBack<Customer>{
+public class CustomerPreCreateCallBackJs  implements BeforeSaveCallBack<Customer>{
 
 	@Override
 	public void onPreCreate(Customer item) {

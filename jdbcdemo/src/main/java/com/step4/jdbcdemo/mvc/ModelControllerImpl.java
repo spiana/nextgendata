@@ -95,7 +95,8 @@ public class ModelControllerImpl<S extends Item> {
 		
 		Page<Item> pages = repo.findAll(p);
 		
-		Page<ItemResource> _p = new PageImpl<ItemResource>(pages.getContent().stream().map(ItemResource::new).collect(Collectors.toList()));
+		Page<ItemResource> _p = new PageImpl<ItemResource>(pages.getContent().stream().map(ItemResource::new).collect(Collectors.toList()),pages.getPageable(), pages.getTotalElements());
+	
 				
 		return pagedAssembler.toModel(_p);
 	}
