@@ -5,16 +5,16 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.model.AbstractItem;
 
 public interface ModelService  {
 
 	
 	
-	public List<? extends Item> query(String query ) ;
-	public void save(Item item)	;
+	public List<? extends AbstractItem> query(String query ) ;
+	public void save(AbstractItem item)	;
 	public JdbcTemplate getJdbcTemplate();
-	public <T extends Item> T createModel(Class modelClass);
+	public <T extends AbstractItem> T createModel(Class modelClass);
 	public Map<String, PersistenceEntity> getPersistenceDictionary();
 	
 			

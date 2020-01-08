@@ -1,5 +1,7 @@
 package com.step4.jdbcdemo;
 
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -9,11 +11,11 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.stereotype.Component;
 
-import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.model.AbstractItem;
 import com.step4.jdbcdemo.repository.RepositoryCallBackMapper;
 
 @Component
-public class RepositoryFactoryImpl<T extends Item> implements RepositoryFactory<T>, BeanDefinitionRegistryPostProcessor {
+public class RepositoryFactoryImpl<T extends AbstractItem> implements RepositoryFactory<T>, BeanDefinitionRegistryPostProcessor {
 
 	private static Logger logger = LoggerFactory.getLogger(RepositoryFactoryImpl.class);
 	
@@ -36,12 +38,15 @@ public class RepositoryFactoryImpl<T extends Item> implements RepositoryFactory<
 
 		for (String model : persistanceDictionary.keySet()) {
 			PersistenceEntity entity = persistanceDictionary.get(model);
+			
+			if ("ABSTRACT".equals(entity.getType()))
+					continue;
 
-			MetaRepository<T> _r = null;
+			MetaRepository _r = null;
 
 			try {
-				_r = new MetaRepository<T>(entity.getName(),  Class.forName(entity.getClassName() ), entity.getName(),
-						persistanceDictionary, callBackMapper);
+				_r = new MetaRepository(entity.getName(),  Class.forName(entity.getClassName() ), entity.getName(),
+						persistanceDictionary, callBackMapper , entity.getAttributes().stream().filter(p -> p.isId() ).collect(Collectors.toList()));
 				_r.setBeanFactory(beanFactory);
 				_r.afterPropertiesSet();
 				

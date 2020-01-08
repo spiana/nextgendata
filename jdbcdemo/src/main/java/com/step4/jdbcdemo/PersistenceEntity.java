@@ -8,8 +8,11 @@ import java.util.Set;
 public class PersistenceEntity {
 	private String className;
 	private String name;
+	private String type = "ENTITY";
 	
 	private List<String> ids = new ArrayList<String>();
+	
+	private  String parentModel;
 	
 	private  Set<PersistanceAttribute>  attributes;
 
@@ -54,5 +57,22 @@ public class PersistenceEntity {
 
 	public void setIds(List<String> ids) {
 		this.ids = ids;
+	}
+
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getParentModel() {
+		return parentModel;
+	}
+
+	public void setParentModel(String parentModel) {
+		this.parentModel = parentModel;
 	}
 }

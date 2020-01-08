@@ -1,4 +1,50 @@
 {
+
+	"item" : {
+		"className" :"com.step4.jdbcdemo.model.Item",
+		"name" : "item",
+		"type" : "ABSTRACT",
+		"attributes":[
+		{
+			"type" :"java.util.Date",
+			"name" : "updated",
+			"columnName": "updated",
+			"id" : "false",
+			"relationType" : "NONE"
+		},
+		{
+			"type" :"java.util.Date",
+			"name" : "created",
+			"columnName": "updated",
+			"id" : "false",
+			"relationType" : "NONE"
+		}
+		]
+	},
+	"anagrafica" : {
+		"className" : "com.step4.jdbcdemo.model.Item",
+		"name" :"anagrafica",
+		 "ids": [
+            "cod_anagrafica"
+        ],
+		"attributes":[
+		{
+			"type":"java.lang.String",
+			"name": "cod_anagrafica",
+			"columnName" :"cod_ana",
+			"id" : true,
+			"relationType": "NONE"
+		},
+		{
+			"type":"java.lang.String",
+			"name": "description",
+			"columnName" :"description",
+			"id" : false,
+			"relationType": "NONE"
+		}
+		]
+		
+	},
     "address": {
         "className": "com.step4.jdbcdemo.model.Address",
         "name": "address",
@@ -95,21 +141,14 @@
                 "id": false,
                 "relationType": "NONE",
                 "relationObject": null
-            },
-            {
-                "type": "com.step4.jdbcdemo.model.Item",
-                "name": "customer",
-                "columnName": "customer_id",
-                "referredColumn": null,
-                "id": false,
-                "relationType": "NONE",
-                "relationObject": null
             }
+            
         ]
     },
     "customer": {
         "className": "com.step4.jdbcdemo.model.Customer",
         "name": "customer",
+        "parentModel": "item",
         "ids": [
             "id"
         ],
@@ -148,25 +187,18 @@
                 "referredColumn": "customer_id",
                 "id": false,
                 "relationType": "ONE_2_MANY",
-                "relationObject": "address"
+                "relationObject": "address",
+                "jsonInclude": true
             },
             {
-                "type": "java.lang.Long",
+                "type": "com.step4.jdbcdemo.model.Customer_ext",
                 "name": "customer_ext",
-                "columnName": null,
-                "referredColumn": "customer_id",
+                "columnName": "customer_ext_id",
+                "referredColumn": null,
                 "id": false,
-                "relationType": "ONE_2_ONE",
-                "relationObject": "customer_ext"
-            },
-            {
-                "type": "java.lang.Long",
-                "name": "customer_ext1",
-                "columnName": null,
-                "referredColumn": "customer_id",
-                "id": false,
-                "relationType": "ONE_2_ONE",
-                "relationObject": "customer_ext1"
+                "relationType": "NONE",
+                "relationObject": null,
+                "jsonInclude" : true
             }
         ]
     },
@@ -199,15 +231,6 @@
                 "type": "java.lang.String",
                 "name": "custom2",
                 "columnName": "custom2",
-                "referredColumn": null,
-                "id": false,
-                "relationType": "NONE",
-                "relationObject": null
-            },
-            {
-                "type": "com.step4.jdbcdemo.model.Item",
-                "name": "customer",
-                "columnName": "customer_id",
                 "referredColumn": null,
                 "id": false,
                 "relationType": "NONE",

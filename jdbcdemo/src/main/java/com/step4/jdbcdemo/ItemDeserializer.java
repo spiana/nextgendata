@@ -11,9 +11,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.model.AbstractItem;
 
-public class ItemDeserializer<T extends Item> extends JsonDeserializer<T> {
+public class ItemDeserializer<T extends AbstractItem> extends JsonDeserializer<T> {
 
 	PersistanceDictionary dictionary;
 

@@ -1,8 +1,10 @@
 package com.step4.jdbcdemo.repository;
 
-import com.step4.jdbcdemo.model.Item;
+import org.springframework.data.domain.Persistable;
 
-public interface AfterSaveCallBack<T extends Item> extends RepositoryCallBack {
+import com.step4.jdbcdemo.model.AbstractItem;
+
+public interface AfterSaveCallBack<T extends Persistable> extends RepositoryCallBack {
 
 	public void onPostCreate(T item);
 }

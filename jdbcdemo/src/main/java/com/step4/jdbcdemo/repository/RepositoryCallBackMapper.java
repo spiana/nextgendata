@@ -10,12 +10,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.domain.Persistable;
 import org.springframework.stereotype.Component;
 
-import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.model.AbstractItem;
 
 @Component
-public class RepositoryCallBackMapper<T extends Item> implements InitializingBean , ApplicationContextAware  {
+public class RepositoryCallBackMapper<T extends Persistable> implements InitializingBean , ApplicationContextAware  {
 
 	ApplicationContext applicationContext;
 	Map<String , List<AfterSaveCallBack<T>>> postCreateCallBack;
@@ -47,7 +48,9 @@ public class RepositoryCallBackMapper<T extends Item> implements InitializingBea
 				}
 				_l.add((AfterSaveCallBack)_callBack);
 				postCreateCallBack.put(_typeCode, _l);
-			}else if (_callBack instanceof BeforeSaveCallBack){
+			} 
+			
+			if (_callBack instanceof BeforeSaveCallBack){
 				List<BeforeSaveCallBack<T>> _l = preCreateCallBack.get(_typeCode) ;
 				if (_l == null) {
 					_l = new ArrayList<BeforeSaveCallBack<T>>();

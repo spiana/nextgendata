@@ -16,7 +16,7 @@ import com.step4.jdbcdemo.RepositoryFactory;
 
 @RestController
 @RequestMapping("/dictionary")
-public class DataDictinaryController {
+public class DataDictionaryController {
 
 	@Autowired
 	PersistanceDictionary dictionary;

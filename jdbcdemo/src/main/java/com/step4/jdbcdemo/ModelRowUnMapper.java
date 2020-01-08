@@ -9,9 +9,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nurkiewicz.jdbcrepository.RowUnmapper;
 
-import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.model.AbstractItem;
 
-public class ModelRowUnMapper<T extends Item> implements RowUnmapper<T> {
+public class ModelRowUnMapper<T extends AbstractItem> implements RowUnmapper<T> {
 
 	String typeCode;
 
@@ -33,12 +33,13 @@ public class ModelRowUnMapper<T extends Item> implements RowUnmapper<T> {
 
 		for (PersistanceAttribute attribute : entity.getAttributes()) {
 			try {
-				if (attribute.relationType.equals(RelationType.NONE) && !attribute.isId()) {
-					if (!Item.class.isAssignableFrom(Class.forName(attribute.type))) {
+				if (attribute.relationType.equals(RelationType.NONE) ) {
+					if (!AbstractItem.class.isAssignableFrom(Class.forName(attribute.type))) {
 						columns.put(attribute.getColumnName(), t.getProperty(attribute.getName()));
 					} else {
-						Item _item = (Item)t.getProperty(attribute.getName());
-						columns.put(attribute.getColumnName(), _item.getId());
+						AbstractItem _item = (AbstractItem)t.getProperty(attribute.getName());
+						if (_item != null)
+							columns.put(attribute.getColumnName(), _item.getId());
 					}
 				}
 			} catch (ClassNotFoundException e) {

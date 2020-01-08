@@ -11,7 +11,7 @@ import com.step4.jdbcdemo.ModelService;
 import com.step4.jdbcdemo.PersistanceDictionary;
 import com.step4.jdbcdemo.PersistenceEntity;
 import com.step4.jdbcdemo.model.Customer;
-import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.model.AbstractItem;
 
 public class DefaultModelService implements ModelService {
 
@@ -19,14 +19,14 @@ public class DefaultModelService implements ModelService {
 
 	private PersistanceDictionary persistenceDictionary;
 
-	public List<? extends Item> query(String query) {
+	public List<? extends AbstractItem> query(String query) {
 		Assert.notNull(query);
 		//return jdbcTemplate.query(query, new ModelRowMapper(createModel(Customer.class), persistenceDictionary));
 		return null;
 	}
 
 	@Override
-	public void save(Item item) {
+	public void save(AbstractItem item) {
 
 		String typecode = item.getClass().getSimpleName().toLowerCase();
 		PersistenceEntity entity = getPersistenceDictionary().get(typecode);
@@ -66,7 +66,7 @@ public class DefaultModelService implements ModelService {
 	}
 
 	@Override
-	public <T extends Item> T createModel(Class modelClass) {
+	public <T extends AbstractItem> T createModel(Class modelClass) {
 		T a = null;
 
 		try {

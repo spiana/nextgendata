@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.Resource;
 
@@ -16,7 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.step4.jdbcdemo.model.Address;
 import com.step4.jdbcdemo.model.Customer;
 import com.step4.jdbcdemo.model.Customer_ext;
-import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.model.AbstractItem;
 import com.step4.jdbcdemo.repository.CustomerRepository;
 
 @SpringBootTest
@@ -24,13 +26,32 @@ class JdbcdemoApplicationTests {
 
 	
 	@Resource(name="customerRepository")
-	 MetaRepository<Customer> customerRepository;
+	 MetaRepository<Customer , Long> customerRepository;
 	 
+	@Resource(name="customerRep")
+	CustomerRepository rep ;
+	
 	
 	@Test
 	void contextLoads() {
 	}
 
+	
+	@Test
+	void getCustomer() {
+		assertEquals(Long.valueOf(1), Long.valueOf(rep.count()) );
+		Iterable<Customer> c = rep.findAll();
+		List<Customer> l = StreamSupport.stream(c.spliterator(), false).collect(Collectors.toList());
+		assertEquals("sergio", l.get(0).getFirstName().toLowerCase());
+		assertEquals(2, l.get(0).getAddreses().size());
+		Address a = l.get(0).getAddreses().get(0);
+		assertEquals("Milano", a.getCity());
+		
+		List<Customer> l1 = rep.findByfirstName("sergio");
+		assertEquals(1, l.size());
+	}
+
+	
 	
 	@Test
 	void registerCustomer() {
@@ -50,7 +71,7 @@ class JdbcdemoApplicationTests {
 	@Test
 	void customerTest() {
 		
-	Item t =  customerRepository.findAll().get(0);
+	AbstractItem t =  customerRepository.findAll().get(0);
 
 	System.out.println(t.getProperties());
 	
@@ -60,12 +81,12 @@ class JdbcdemoApplicationTests {
 	
 	assertEquals("Milano",address.getProperty("city"));
 	
-	assertEquals(t.getProperty("id"),((Item)address.getProperty("customer")).getProperty("id"));
+	assertEquals((Long)t.getProperty("id"),((AbstractItem)address.getProperty("customer")).getProperty("id"));
 	System.out.println(address.getProperties());
 	
 	assertEquals("sergio",t.getProperty("firstName"));
 	
-	assertEquals("custom1",((Item) t.getProperty("customer_ext")).getProperty("custom1"));
+	//assertEquals("custom1",((AbstractItem) t.getProperty("customer_ext")).getProperty("custom1"));
 		
 	printItemjs(t);
 	
@@ -89,7 +110,7 @@ class JdbcdemoApplicationTests {
 		assertEquals("sergio", value.asString());
 	}
 	
-	private void printItemjs(Item item) {
+	private void printItemjs(AbstractItem item) {
 		
 		Context context = Context.newBuilder().allowAllAccess(true).build();
 		context.getBindings("js").putMember("item", item);

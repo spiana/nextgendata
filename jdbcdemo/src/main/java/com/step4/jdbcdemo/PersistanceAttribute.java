@@ -5,6 +5,7 @@ public class PersistanceAttribute{
 	String name;
 	String columnName;
 	String referredColumn;
+	Boolean jsonInclude = false;
 	
 	boolean id = false;
 	RelationType relationType= RelationType.NONE;
@@ -111,6 +112,14 @@ public class PersistanceAttribute{
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public Boolean getJsonInclude() {
+		return jsonInclude;
+	}
+
+	public void setJsonInclude(Boolean jsonInclude) {
+		this.jsonInclude = jsonInclude;
 	}
 
 }

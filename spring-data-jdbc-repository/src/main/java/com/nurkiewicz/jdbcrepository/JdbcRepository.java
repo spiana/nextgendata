@@ -45,7 +45,7 @@ import java.util.Optional;
  * Implementation of {@link PagingAndSortingRepository} using
  * {@link JdbcTemplate}
  */
-public abstract class JdbcRepository<T extends Persistable<ID>, ID extends Serializable>
+public abstract class JdbcRepository<T extends Persistable<ID>, ID>
 		implements PagingAndSortingRepository<T, ID>, InitializingBean, BeanFactoryAware
 
 {
@@ -183,7 +183,7 @@ public abstract class JdbcRepository<T extends Persistable<ID>, ID extends Seria
 		return jdbcOperations.query(sqlGenerator.selectAll(table), rowMapper);
 	}
 
-	public List<T> findAllByColumnId(String columnName, Long id) {
+	public List<T> findAllByColumnId(String columnName, ID id) {
 		return jdbcOperations.query(sqlGenerator.selectAllByColumn(table, columnName), rowMapper, id);
 	}
 

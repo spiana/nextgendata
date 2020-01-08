@@ -10,14 +10,15 @@ import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Persistable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.Assert;
 
-import com.step4.jdbcdemo.model.Item;
+import com.step4.jdbcdemo.model.AbstractItem;
 import com.step4.jdbcdemo.model.ItemRelation;
 import com.step4.jdbcdemo.model.LazyLoadedColumn;
 
-public class ModelRowMapper<T extends Item> implements RowMapper<T> {
+public class ModelRowMapper<T extends AbstractItem> implements RowMapper<T> {
 
 	Class type_class;
 	private PersistanceDictionary dictionary;
@@ -47,18 +48,14 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 		if (entity == null)
 			throw new RuntimeException(String.format("no entity found  %s ", type.getClass().getSimpleName()));
 
-		// Populate Ids Columns
-		populateProperties(entity.getAttributes().stream().filter(p -> p.isId() ).collect(Collectors.toList()), columns, type, rs);
 		
-		populateProperties(entity.getAttributes(), columns, type, rs);
-		
-		
+		populateProperties(entity, columns, type, rs);
 	
-
+		
 		return type;
 	}
 
-	private <T extends Item> T createModel(Class modelClass, String typeCode) {
+	private <T extends AbstractItem> T createModel(Class modelClass, String typeCode) {
 		T a = null;
 		try {
 			a = (T) modelClass.getConstructor(String.class).newInstance(typeCode);
@@ -79,13 +76,27 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 		return a;
 	}
 	
+	private void populateProperties(PersistenceEntity entity ,List<String> columns  , T type , ResultSet rs ) throws SQLException{
+		
+		if (entity.getParentModel() != null) {
+			PersistenceEntity _entity = dictionary.get(entity.getParentModel());
+			if (_entity != null) {
+				populateProperties(_entity, columns, type, rs);
+			}
+		}
+		//Populate Ids columns
+		populateProperties(entity.getAttributes().stream().filter(p -> p.isId() ).collect(Collectors.toList()), columns, type, rs);
+		populateProperties(entity.getAttributes(), columns, type, rs);
+	}
+	
 	private void populateProperties(Collection<PersistanceAttribute> attributes , List<String> columns  , T type , ResultSet rs) throws SQLException {
 
+		type.isnew= false;	
 		for (PersistanceAttribute attribute : attributes) {
 			try {
 				if (attribute.relationType == RelationType.NONE) {
 
-					if (!Item.class.isAssignableFrom(Class.forName(attribute.type))) {
+					if (!AbstractItem.class.isAssignableFrom(Class.forName(attribute.type))) {
 						if (columns.contains(attribute.columnName.toLowerCase()))
 							type.putProperty(attribute.name,
 									rs.getObject(attribute.columnName, Class.forName(attribute.type)));
@@ -93,8 +104,8 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 						PersistenceEntity _e = dictionary.get(attribute.name);
 						Assert.notNull(_e);
 						
-						type.putProperty(attribute.name, new LazyLoadedColumn<Item>(attribute.name, _e.getIds().get(0),
-								rs.getLong(attribute.columnName), attribute.type));
+						type.putProperty(attribute.name, new LazyLoadedColumn<AbstractItem>(attribute.name, _e.getIds().get(0),
+								rs.getLong(attribute.columnName), attribute.type, attribute.jsonInclude));
 
 						type.putProperty(attribute.name, type.getProperty(attribute.name));
 
@@ -104,12 +115,12 @@ public class ModelRowMapper<T extends Item> implements RowMapper<T> {
 
 					PersistenceEntity related_entity = dictionary.get(attribute.getRelationObject());
 
-					Item related;
+					AbstractItem related;
 
-					related = (Item) createModel(Class.forName(related_entity.getClassName()), related_entity.getName());
+					related = (AbstractItem) createModel(Class.forName(related_entity.getClassName()), related_entity.getName());
 
-					ItemRelation<Item> relation = new ItemRelation<Item>(attribute.relationObject,
-							attribute.getReferredColumn(), attribute.relationType, type.getId(), related);
+					ItemRelation relation = new ItemRelation(attribute.relationObject,
+							attribute.getReferredColumn(), attribute.relationType, type.getId(), related, attribute.jsonInclude);
 
 					type.putProperty(attribute.name, relation);
 				}

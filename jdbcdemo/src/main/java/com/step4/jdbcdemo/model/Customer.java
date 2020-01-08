@@ -1,29 +1,54 @@
 package com.step4.jdbcdemo.model;
 
-public class Customer extends Item {
-	
-	
+import java.util.List;
+
+import org.springframework.data.annotation.AccessType;
+import org.springframework.data.annotation.AccessType.Type;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.MappedCollection;
+
+@AccessType(Type.PROPERTY)
+public class Customer extends AbstractItem<Long> {
 	
 	public Customer() {
 		super("customer");
 	}
-
-	private String firstName;
 	
+	@Column("pk")
+	@Id
+	public Long getId() {
+		return  getProperty("id");
+	}
+	
+	public void setId(Long id) {
+		putProperty("id",id);
+	}
+	
+	@Column("first_Name" )
 	public String getFirstName() {
-		return firstName;
+		return  getProperty("firstName");
 	}
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+		 putProperty("firstName",firstName);
 	}
 	
-	String lastName;
 	
+	@Column("last_name" )
 	public String getLastName() {
-		return lastName;
+		return  getProperty("lastName");
 	}
 	public void setLastName(String lastName) {
-		this.lastName = lastName;
+		putProperty("lastName", lastName);
+	}
+	
+	@MappedCollection(idColumn = "customer_id" , keyColumn = "pk" )
+	public List<Address> getAddreses(){
+		return getProperty("address");
+	}
+	
+	public void setAddreses(List<Address> addreses){
+		putProperty("address", addreses);
 	}
 
 }
